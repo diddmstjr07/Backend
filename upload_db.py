@@ -13,4 +13,4 @@ def upload_db(data):
             if err_cnt > 5:
                 print('error - id : ', data[0])
                 break
-            err_cnt += 1     
+            err_cnt += 1
