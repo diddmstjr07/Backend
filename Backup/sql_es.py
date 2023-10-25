@@ -2,7 +2,7 @@ import mysql.connector
 
 db = mysql.connector.connect(
   host="182.211.172.137",
-  port="3306",
+  port="1706",
   user="eunseok07yang",
   password="qwer1234!!",
   database="Drone_Project"
@@ -26,12 +26,12 @@ def sql_insert_val(sql, val): # 이게 db에 정보를 넣어줄때 사용하는
 
         db.commit() # 내용을 저장 
 
-        return {"kind" : "ok", "msg" : "회원가입 성공"}
+        return {"kind" : "ok", "msg" : "성공"}
 
         #print("sql insert - complete")
     except: # 에러가 난다면 에러코드를 출력
         print("sql insert - Error : "+sql)
-        return {"kind" : "fail", "msg" : "회원가입 실패", "q": sql, "v": val}
+        return {"kind" : "fail", "msg" : "실패", "q": sql, "v": val}
 
 def sql_select(sql): # Server.py 에서 이함수와 통신 (query)를 sql 자리에 대입하여 함수 연산을 진행
     try: # 시도

@@ -1,4 +1,4 @@
-from sql_es import sql_insert_val
+from util.sql_es import sql_insert_val
 
 def upload_db(data):
     err_cnt = 1
