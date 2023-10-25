@@ -1,4 +1,4 @@
-from util.sql_es import sql_insert_val
+from router.util.sql_es import sql_insert_val
 import jwt
 import datetime
 

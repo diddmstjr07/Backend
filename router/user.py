@@ -1,11 +1,8 @@
 from fastapi import APIRouter
-from util.sql_es import sql_select # db 데이터를 가져오는 모듈(함수)를 소환
 from pydantic import BaseModel
-from util.sql_es import sql_insert_val
-from util.sql_es import login_ok
-from util.sql_es import select_data
-from util.sql_es import sql_update
-from util.sql_es import sql_delete
+import router.util.sql_es as q
+import router.util.token as t
+
 
 user = APIRouter(prefix='/user')
 
@@ -14,7 +11,7 @@ class User(BaseModel):
     Email: str | None = None
     Password: str | None = None
 
-@user.post("/Register")
+@user.post("/Register", tags=['user'])
 async def create_item(item: User):
     print(item)
     err_cnt = 1
@@ -23,7 +20,7 @@ async def create_item(item: User):
     while True:
         try:
             val = (item.First_name,item.Email,item.Password) # 쿼리문에 있는 %s 데이터를 차례차례 data 배열이 받아줌
-            return sql_insert_val(query, val) # query, val을 sql_es.py 파일로 전송
+            return q.sql_insert_val(query, val) # query, val을 sql_es.py 파일로 전송
         except: # 5번 이상 오류가 발견되면 중단
             if err_cnt > 5:
                 print('error - id : ')
@@ -35,14 +32,14 @@ class UserLogin(BaseModel):
     Email: str | None = None
     Password: str | None = None
 
-@user.post("/Login")
+@user.post("/Login", tags=['user'])
 async def check_item(data : UserLogin):
     err_cnts = 1
     while True:
         try:
-            res = login_ok(data.Email, data.Password)
+            res = q.login_ok(data.Email, data.Password)
             if res["kind"] == "ok":
-                token_res = NewToken(res["id"])
+                token_res = t.NewToken(res["id"])
                 if token_res["kind"] == "ok" :
                     return {"kind" : "ok", "msg" : "로그인 성공",  
                             "token" : token_res["token"], "name" : res["name"], "email" : res["email"]}
@@ -58,13 +55,13 @@ class update(BaseModel):
     Password: str | None = None
     Token: str | None = None
 
-@user.post("/Update")
+@user.post("/Update", tags=['user'])
 async def updated(data: update):
     err_cnts = 1
     while True:
         try:
-            response = sql_select(f"SELECT uid FROM Session WHERE AccessToken = '{data.Token}'")
-            responses = sql_update(f"UPDATE User_Data SET First_name = '{data.Name}' , Password = '{data.Password}' WHERE id = '{response[0][0]}'")
+            response = q.sql_select(f"SELECT uid FROM Session WHERE AccessToken = '{data.Token}'")
+            responses = q.sql_update(f"UPDATE User_Data SET First_name = '{data.Name}' , Password = '{data.Password}' WHERE id = '{response[0][0]}'")
 
             return {"kind" : "ok", "data" : responses}
         except: # 5번 이상 오류가 발견되면 중단
@@ -76,12 +73,12 @@ async def updated(data: update):
 class delete(BaseModel):
     Id: int | None = None
 
-@user.post("/deletedb")
+@user.post("/deletedb", tags=['user'])
 async def delete_db(data: delete):
     err_cnts = 1
     while True:
         try:
-            response = sql_delete(f"DELETE FROM User_Data WHERE id = {data.Id}")
+            response = q.sql_delete(f"DELETE FROM User_Data WHERE id = {data.Id}")
             return {"kind" : "ok", "data" : response}
         except: # 5번 이상 오류가 발견되면 중단
             if err_cnts > 5:
@@ -92,13 +89,13 @@ async def delete_db(data: delete):
 class Privacy(BaseModel):
     Token: str | None = None
 
-@user.post("/privacy")
+@user.post("/privacy", tags=['user'])
 async def privacy_page(data: Privacy):
     err_cnts = 1
     while True:
         try:
-            response = select_data(f"SELECT uid FROM Session WHERE AccessToken = '{data.Token}'")
-            responses = select_data(f"SELECT * FROM User_Data WHERE id = {response[0][0]}")
+            response = q.select_data(f"SELECT uid FROM Session WHERE AccessToken = '{data.Token}'")
+            responses = q.select_data(f"SELECT * FROM User_Data WHERE id = {response[0][0]}")
             return {"kind" : "ok", 'data' : responses}
         except:
             if err_cnts > 5:
@@ -109,13 +106,13 @@ async def privacy_page(data: Privacy):
 class get(BaseModel):
     Token: str | None = None
 
-@user.post("/getid")
+@user.post("/getid", tags=['user'])
 async def get_db(data: get):
     err_cnts = 1
     while True:
         try:
-            response = sql_select(f"SELECT uid FROM Session WHERE AccessToken = '{data.Token}'")
-            response_main = sql_select(f"SELECT First_name FROM User_Data WHERE id = {response[0][0]}")
+            response = q.sql_select(f"SELECT uid FROM Session WHERE AccessToken = '{data.Token}'")
+            response_main = q.sql_select(f"SELECT First_name FROM User_Data WHERE id = {response[0][0]}")
             return {"kind" : "ok", "data" : response_main}
         except: # 5번 이상 오류가 발견되면 중단
             if err_cnts > 5:

@@ -1,14 +1,14 @@
-from util.sql_es import sql_select # db 데이터를 가져오는 모듈(함수)를 소환
+import router.util.sql_es as q # db 데이터를 가져오는 모듈(함수)를 소환
 from fastapi import APIRouter
 
 garbage_can = APIRouter(prefix='/garbage_can')
 
-@garbage_can.get("/get")
+@garbage_can.get("/get", tags=['garbage_can'])
 async def get_db():
     err_cnts = 1
     while True:
         try:
-            response = sql_select(f"SELECT lat, lng, isFull FROM Garbage_Can_Data")
+            response = q.sql_select(f"SELECT lat, lng, isFull FROM Garbage_Can_Data")
             return {"kind" : "ok", "data" : response}
         except: # 5번 이상 오류가 발견되면 중단
             if err_cnts > 5:

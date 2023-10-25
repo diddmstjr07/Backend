@@ -5,7 +5,7 @@ import uuid
 
 photo = APIRouter(prefix='/photo')
 
-@photo.post("/photo")
+@photo.post("/get", tags=['photo'])
 async def upload_photo(file: UploadFile):
     UPLOAD_DIR = "/var/www/html/photo"
 
