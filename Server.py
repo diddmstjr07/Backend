@@ -26,7 +26,7 @@ app.include_router(garbage)
 
 @app.get("/")
 async def root():
-    return {"message": "Hello World"}
+    return {"Server_page"}
 
 if __name__ == "__main":
     uvicorn.run("Server:app", host='0.0.0.0', reload=True)

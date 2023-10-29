@@ -73,7 +73,7 @@ async def updated(data: update):
 class delete(BaseModel):
     Id: int | None = None
 
-@user.post("/deletedb", tags=['user'])
+@user.post("/Delete", tags=['user'])
 async def delete_db(data: delete):
     err_cnts = 1
     while True:
@@ -89,7 +89,7 @@ async def delete_db(data: delete):
 class Privacy(BaseModel):
     Token: str | None = None
 
-@user.post("/privacy", tags=['user'])
+@user.post("/Infor", tags=['user'])
 async def privacy_page(data: Privacy):
     err_cnts = 1
     while True:
@@ -106,7 +106,7 @@ async def privacy_page(data: Privacy):
 class get(BaseModel):
     Token: str | None = None
 
-@user.post("/getid", tags=['user'])
+@user.post("/input", tags=['user'])
 async def get_db(data: get):
     err_cnts = 1
     while True:

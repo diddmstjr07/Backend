@@ -6,17 +6,17 @@ reservation = APIRouter(prefix='/reservation')
 
 class Reservation(BaseModel):
     Token: str | None = None
-    Uid: str | None = None
+    Gid: str | None = None
 
-@reservation.post("/reservation", tags=['reservation'])
+@reservation.post("", tags=['reservation'])
 async def get_res(data: Reservation):
     err_cnts = 1
     while True:
         try:
             response = q.sql_select(f"SELECT uid FROM Session WHERE AccessToken = '{data.Token}'")
-            response_select = q.sql_select(f"SELECT res FROM Garbage_Data WHERE id = '{data.Uid}'")
+            response_select = q.sql_select(f"SELECT res FROM Garbage_Data WHERE id = '{data.Gid}'")
             if response_select[0][0] == None:
-                response_main = q.sql_update(f"UPDATE Garbage_Data SET res = '{response[0][0]}' WHERE id = '{data.Uid}'")
+                response_main = q.sql_update(f"UPDATE Garbage_Data SET res = '{response[0][0]}' WHERE id = '{data.Gid}'")
                 return {"kind" : "ok", "data" : response_main}
             else:
                 return {"kind" : "ok_resed", "data" : response_select}
@@ -29,14 +29,14 @@ async def get_res(data: Reservation):
 class Reservation_show(BaseModel):
     Token: str | None = None
 
-@reservation.post("/reservation_show", tags=['reservation'])
+@reservation.post("/show", tags=['reservation'])
 async def get_res(data: Reservation_show):
     err_cnts = 1
     while True:
         try:
             response = q.sql_select(f"SELECT uid FROM Session WHERE AccessToken = '{data.Token}'")
             responses = q.sql_select(f"SELECT id, lat, lng, datetime, object, conf, image FROM Garbage_Data WHERE res = '{response[0][0]}' and com = 'N'")
-            return {"kind" : "ok_resed", "data" : responses}
+            return {"kind" : "ok", "data" : responses}
         except: # 5번 이상 오류가 발견되면 중단
             if err_cnts > 5:
                 print('error - id : ')
