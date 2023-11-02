@@ -112,7 +112,7 @@ async def get_db(data: get):
     while True:
         try:
             response = q.sql_select(f"SELECT uid FROM Session WHERE AccessToken = '{data.Token}'")
-            response_main = q.sql_select(f"SELECT First_name FROM User_Data WHERE id = {response[0][0]}")
+            response_main = q.sql_select(f"SELECT First_name, point FROM User_Data WHERE id = {response[0][0]}")
             return {"kind" : "ok", "data" : response_main}
         except: # 5번 이상 오류가 발견되면 중단
             if err_cnts > 5:

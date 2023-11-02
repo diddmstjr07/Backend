@@ -8,7 +8,7 @@ import uvicorn
 
 from fastapi.middleware.cors import CORSMiddleware
 
-app = FastAPI() #fastip 모듈을 변수에 저장~
+app = FastAPI() #fastip 모듈을 변수에 저장
 
 app.add_middleware(
     CORSMiddleware,
@@ -28,5 +28,5 @@ app.include_router(garbage)
 async def root():
     return {"Server_page"}
 
-if __name__ == "__main":
-    uvicorn.run("Server:app", host='0.0.0.0', reload=True)
+if __name__ == "__main__":
+    uvicorn.run("Server:app", host='0.0.0.0', port=8000, reload=True)
