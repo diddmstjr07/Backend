@@ -13,8 +13,8 @@ async def get_db():
     while True:
         try:
             response = q.sql_select(f"SELECT id, lat, lng, datetime, object, object, conf, image FROM Garbage_Data WHERE com = 'N'")
-            # response = sql_select(f"SELECT id, lat, lng, datetime, object, object, conf, image, ST_Distance_Sphere(POINT('{my_lng}', '{my_lat}'), POINT(lng, lat)) AS distance FROM Garbage_Data WHERE ST_Distance_Sphere(POINT('{my_lng}', '{my_lat}'), POINT(lng, lat)) <= {km_range} ORDER BY distance ASC")
-            
+            # response = q.sql_select(f"SELECT id, lat, lng, datetime, object, object, conf, image, ST_Distance_Sphere(POINT('{my_lng}', '{my_lat}'), POINT(lng, lat)) AS distance FROM Garbage_Data WHERE ST_Distance_Sphere(POINT('{my_lng}', '{my_lat}'), POINT(lng, lat)) <= {km_range} and com = 'N' ORDER BY distance ASC")
+
             return {"kind" : "ok", "data" : response}
         
         except: # 5번 이상 오류가 발견되면 중단
@@ -30,12 +30,13 @@ class upload(BaseModel):
     object: str | None = None
     conf: str | None = None
     img: str | None = None
+    com: str | None = None
 
 @garbage.post("/upload", tags=['garbage'])
 async def upload_data(upload_: upload):
     print(upload_)
     err_cnt = 1
-    query = "INSERT INTO `Garbage_Data` (`lat`, `lng`, `datetime`, `object`, `conf`, `image`) VALUES (%s, %s, %s, %s, %s, %s)"
+    query = "INSERT INTO `Garbage_Data` (`lat`, `lng`, `datetime`, `object`, `conf`, `image`, `com`) VALUES (%s, %s, %s, %s, %s, %s, %s)"
     # 쿼리문을 작성하여 테이블에 요소 넣기
     while True:
         try:

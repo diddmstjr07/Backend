@@ -1,14 +1,18 @@
-from fastapi import FastAPI # fastip를 호출하는 모듈
+from fastapi import FastAPI
 from router.user import user
 from router.reservation import reservation
 from router.garbage_can import garbage_can
 from router.photo import photo
 from router.garbage import garbage
+from router.spring_flower import flower
+from router.livestreaming import stream
 import uvicorn
-
+import router.util.sql_es as q
+from fastapi.responses import HTMLResponse
+from fastapi.templating import Jinja2Templates
 from fastapi.middleware.cors import CORSMiddleware
 
-app = FastAPI() #fastip 모듈을 변수에 저장
+app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
@@ -23,6 +27,8 @@ app.include_router(reservation)
 app.include_router(photo)
 app.include_router(garbage_can)
 app.include_router(garbage)
+app.include_router(flower)
+app.include_router(stream)
 
 @app.get("/")
 async def root():

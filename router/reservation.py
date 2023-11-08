@@ -78,3 +78,25 @@ async def reserve(data: Display):
             if err_cnts > 5:
                 print('error - id : ')
                 return {"kind" : "fail", "msg" : "DB error"}
+
+class Point(BaseModel):
+    Token: str | None = None
+
+@reservation.post("/point", tags=['reservation'])
+async def reserve(data: Point):
+    err_cnts = 1
+    while True:
+        try:
+            response = q.sql_select(f"SELECT uid FROM Session WHERE AccessToken = '{data.Token}'")
+            responses = q.sql_select(f"SELECT point FROM User_Data WHERE id = {response[0][0]}")
+            # print(responses[0][0])
+            if responses[0][0] == None:
+                response1 = q.sql_update(f"UPDATE User_Data SET point = 100 WHERE id = '{response[0][0]}'")
+                return{"kind" : "ok", 'data' : response1}
+            else:
+                response2 = q.sql_update(f"UPDATE User_Data SET point = point + 100 WHERE id = '{response[0][0]}'")
+                return {"kind" : "ok", 'data' : response2}
+        except:
+            if err_cnts > 5:
+                print('error - id : ')
+                return {"kind" : "fail", "msg" : "DB error"}
